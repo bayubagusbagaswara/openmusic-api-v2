@@ -25,3 +25,14 @@
 # Langkah-Langkah
 
 - Kita perbaiki dulu OpenMusic API V1 - berdasarkan hasil reviewer
+
+# Create Table
+- npm run migrate create "create table songs"
+- create-table-album
+- create-table-song
+- create-table-authentications
+- create-table-playlist
+- create-table-playlist-songs
+- add-foreign-key-to-album-id-column
+- create-table-collaborations
+- create-table-playlist-song-activities

@@ -12,7 +12,7 @@ const SongsService = require('./services/postgres/SongsService');
 const SongsValidator = require('./validator/songs');
 
 // error
-const errors = require('./api/errors');
+const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
   const albumsService = new AlbumsService();
@@ -29,9 +29,6 @@ const init = async () => {
 
   await server.register([
     {
-      plugin: errors,
-    },
-    {
       plugin: albums,
       options: {
         service: albumsService,
@@ -46,21 +43,20 @@ const init = async () => {
       },
     }]);
 
-  // server.ext('onPreResponse', (request, h) => {
-  //   // mendapatkan konteks response dari request
-  //   const { response } = request;
+  server.ext('onPreResponse', (request, h) => {
+    const { response } = request;
 
-  //   if (response instanceof ClientError) {
-  //     const newResponse = h.response({
-  //       status: 'fail',
-  //       message: response.message,
+    if (response instanceof ClientError) {
+      const newResponse = h.response({
+        status: 'fail',
+        message: response.message,
 
-  //     });
-  //     newResponse.code(response.statusCode);
-  //     return newResponse;
-  //   }
-  //   return response.continue || response;
-  // });
+      });
+      newResponse.code(response.statusCode);
+      return newResponse;
+    }
+    return response.continue || response;
+  });
 
   await server.start();
   console.log(`Server berjalan pada ${server.info.uri}`);

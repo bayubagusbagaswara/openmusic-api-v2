@@ -14,9 +14,14 @@
 - npm install node-pg-migrate
 
 - kemudian buat scripts di package.json `"migrate": "node-pg-migrate"`
+- npm run migrate up
 
 - npm install bcrypt
 - npm install @hapi/jwt
 - require('crypto').randomBytes(64).toString('hex');
 
 - truncate albums, songs, users, authentications, playlists, playlistsongs, playlist_song_activities, collaborations;
+
+# Langkah-Langkah
+
+- Kita perbaiki dulu OpenMusic API V1 - berdasarkan hasil reviewer

@@ -54,31 +54,51 @@ class SongsHandler {
   }
 
   async getSongsHandler(request, h) {
-    const { title, performer } = request.query;
-    let songs = await this._service.getSongs();
+    try {
+      const { title, performer } = request.query;
+      let songs = await this._service.getSongs();
 
-    if (title && performer) {
-      songs = songs.filter((song) => song.title.toLowerCase().includes(title.toLowerCase()) && song.performer.toLowerCase().includes(performer.toLowerCase()));
+      if (title && performer) {
+        songs = songs.filter((song) => song.title.toLowerCase().includes(title.toLowerCase()) && song.performer.toLowerCase().includes(performer.toLowerCase()));
+      }
+      if (title) {
+        songs = songs.filter((song) => song.title.toLowerCase().includes(title.toLowerCase()));
+      }
+      if (performer) {
+        songs = songs.filter((song) => song.performer.toLowerCase()
+          .includes(performer.toLowerCase()));
+      }
+      const response = h.response({
+        status: 'success',
+        data: {
+          songs: songs.map((song) => ({
+            id: song.id,
+            title: song.title,
+            performer: song.performer,
+          })),
+        },
+      });
+      response.code(200);
+      return response;
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
+
+      // Server ERROR!
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      console.error(error);
+      return response;
     }
-    if (title) {
-      songs = songs.filter((song) => song.title.toLowerCase().includes(title.toLowerCase()));
-    }
-    if (performer) {
-      songs = songs.filter((song) => song.performer.toLowerCase()
-        .includes(performer.toLowerCase()));
-    }
-    const response = h.response({
-      status: 'success',
-      data: {
-        songs: songs.map((song) => ({
-          id: song.id,
-          title: song.title,
-          performer: song.performer,
-        })),
-      },
-    });
-    response.code(200);
-    return response;
   }
 
   async getSongByIdHandler(request, h) {

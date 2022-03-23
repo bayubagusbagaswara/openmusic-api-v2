@@ -30,6 +30,7 @@
 - npm run migrate create "create table songs"
 - create-table-album
 - create-table-song
+- create-table-user
 - create-table-authentications
 - create-table-playlist
 - create-table-playlist-songs

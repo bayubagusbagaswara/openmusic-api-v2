@@ -37,3 +37,5 @@
 - add-foreign-key-to-album-id-column
 - create-table-collaborations
 - create-table-playlist-song-activities
+
+- kita belum memproteksi routes.js

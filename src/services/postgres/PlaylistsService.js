@@ -19,6 +19,7 @@ class PlaylistsService {
       text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
       values: [id, name, owner],
     };
+
     const result = await this._pool.query(query);
     if (!result.rows[0].id) {
       throw new InvariantError('Playlist gagal ditambahkan');
@@ -28,33 +29,34 @@ class PlaylistsService {
 
   // ambil semua playlist GET /playlist
   async getPlaylists(owner) {
-    // cek owner nya ada atau tidak
-    let query;
-    if (owner) {
-      query = {
-        text: 'SELECT id, name, owner FROM playlist WHERE owner = $1',
-        values: [owner],
-      };
-    } else {
-      query = {
-        text: 'SELECT id, name, owner FROM playlist',
-      };
-    }
+    const query = {
+      text: `SELECT playlists.id, playlists.name, users.username
+      FROM playlists
+      INNER JOIN users ON playlists.owner = users.id
+      LEFT JOIN collaborations ON collaborations.playlist_id = playlists.id
+      WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
+      values: [owner],
+    };
+
     const result = await this._pool.query(query);
-    if (!result.rowCount) {
-      throw new NotFoundError('Playlist tidak ditemukan');
-    }
     return result.rows.map(mapPlaylistDBToModel);
   }
 
   // ambil playlist berdasarkan id GET /playlist/{id}
   async getPlaylistById(id) {
     const query = {
-      text: 'SELECT id, name, owner FROM playlists WHERE id = $1',
+      text: `
+        SELECT playlist.id, playlist.name, playlist.owner, users.username FROM playlists 
+        LEFT JOIN users ON playlists.owner = users.id
+        LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id
+        WHERE playlists.id = $1`,
       values: [id],
     };
     const result = await this._pool.query(query);
-    return result.rows.map(mapPlaylistDBToModel)[0];
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist tidak ditemukan');
+    }
+    return result.rows[0];
   }
 
   // menghapus playlist berdasarkan id DELETE /playlist/{id}
@@ -69,13 +71,11 @@ class PlaylistsService {
     }
   }
 
-  /* Service for song with relation in playlist */
-
   // menambahkan lagu ke playlist POST /playlist/{id}/songs
   async addSongToPlaylist(playlistId, songId) {
     const id = `playlist_songs-${nanoid(16)}`;
     const query = {
-      text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id',
+      text: 'INSERT INTO playlist_songs (id, playlist_id, song_id) VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, songId],
     };
 
@@ -114,14 +114,13 @@ class PlaylistsService {
     }
   }
 
-  /** Activities */
   // membuat activities
   async addPlaylistSongActivities(playlistId, songId, userId, action) {
     const id = `playlist_song_activities-${nanoid(16)}`;
     const time = new Date().toISOString();
 
     const query = {
-      text: 'INSERT INTO playlist_song_activities VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+      text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
       values: [id, playlistId, songId, userId, action, time],
     };
 
@@ -136,9 +135,9 @@ class PlaylistsService {
   // ambil activities
   async getPlaylistSongActivities(playlistId) {
     const query = {
-      text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time
+      text: `SELECT playlist_song_activities.action, playlist_song_activities.time, users.username, songs.title, 
       FROM playlist_song_activities
-      INNER JOIN users ON playlist_song_activities.user_id = users.id
+      LEFT JOIN users ON playlist_song_activities.user_id = users.id
       LEFT JOIN songs ON playlist_song_activities.song_id = songs.id
       WHERE playlist_song_activities.playlist_id = $1 
       ORDER BY playlist_song_activities.time`,
@@ -152,8 +151,6 @@ class PlaylistsService {
 
     return result.rows;
   }
-
-  /** Service for authentication */
 
   // verifyPlaylistOwner
   async verifyPlaylistOwner(id, owner) {

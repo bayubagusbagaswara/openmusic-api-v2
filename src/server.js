@@ -125,6 +125,7 @@ const init = async () => {
         service: {
           collaborationsService,
           playlistsService,
+          usersService,
         },
         validator: CollaborationsValidator,
       },

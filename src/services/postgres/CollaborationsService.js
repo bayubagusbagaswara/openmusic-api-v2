@@ -36,17 +36,17 @@ class CollaborationsService {
     }
   }
 
-  async verifyUser(userId) {
-    const query = {
-      text: 'SELECT * FROM users WHERE id = $1',
-      values: [userId],
-    };
-    const result = await this._pool.query(query);
+  // async verifyUser(userId) {
+  //   const query = {
+  //     text: 'SELECT * FROM users WHERE id = $1',
+  //     values: [userId],
+  //   };
+  //   const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
-      throw new NotFoundError('User tidak ditemukan');
-    }
-  }
+  //   if (!result.rows.length) {
+  //     throw new NotFoundError('User tidak ditemukan');
+  //   }
+  // }
 
   async verifyPlaylist(playlistsId) {
     const query = {

@@ -107,7 +107,6 @@ const init = async () => {
         service: {
           authenticationsService,
           usersService,
-
         },
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,

@@ -39,3 +39,5 @@
 - create-table-playlist-song-activities
 
 - kita belum memproteksi routes.js
+
+truncate albums, songs, users, authentications, playlists, playlistsongs, playlist_song_activities, collaborations;

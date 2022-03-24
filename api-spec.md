@@ -162,3 +162,54 @@ message: <apa pun selama tidak kosong>
 - Pengelolaan data album.
 - Pengelolaan data song.
 - Menerapkan data validations resource album dan song.
+
+
+# OPSIONAL : Kriteria 1 : Memiliki fitur kolaborator playlist
+Hak akses kolaborator
+Ketika user ditambahkan sebagai kolaborator playlist oleh pemilik playlist. Maka hak akses user tersebut terhadap playlist adalah:
+
+- Playlist tampil pada permintaan GET /playlists.
+- Dapat menambahkan lagu ke dalam playlist.
+- Dapat menghapus lagu dari playlist.
+- Dapat melihat daftar lagu yang ada di playlist.
+- Dapat melihat aktifitas playlist (jika menerapkan kriteria opsional ke-2).
+
+# OPSIONAL: Kriteria 2 : Memiliki Fitur Playlist Activities
+API yang dibuat harus memiliki fitur aktivitas playlist. Fitur ini digunakan untuk mencatat riwayat menambah atau menghapus lagu dari playlist oleh pengguna atau kolaborator.
+
+Riwayat aktivitas playlist dapat diakses melalui endpoint:
+
+- Method: GET
+- URL: /playlists/{id}/activities
+
+Server harus mengembalikan respons dengan:
+- Status code : 200
+- Response Body
+```json
+{
+  "status": "success",
+  "data": {
+    "playlistId": "playlist-Mk8AnmCp210PwT6B",
+    "activities": [
+      {
+        "username": "dicoding",
+        "title": "Life in Technicolor",
+        "action": "add",
+        "time": "2021-09-13T08:06:20.600Z"
+      },
+      {
+        "username": "dicoding",
+        "title": "Centimeteries of London",
+        "action": "add",
+        "time": "2021-09-13T08:06:39.852Z"
+      },
+      {
+        "username": "dimasmds",
+        "title": "Life in Technicolor",
+        "action": "delete",
+        "time": "2021-09-13T08:07:01.483Z"
+      }
+    ]
+  }
+}
+```

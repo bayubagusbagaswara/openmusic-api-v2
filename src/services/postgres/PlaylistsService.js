@@ -73,9 +73,9 @@ class PlaylistsService {
 
   // menambahkan lagu ke playlist POST /playlist/{id}/songs
   async addSongToPlaylist(playlistId, songId) {
-    const id = `playlist_songs-${nanoid(16)}`;
+    const id = `playlistsongs-${nanoid(16)}`;
     const query = {
-      text: 'INSERT INTO playlist_songs (id, playlist_id, song_id) VALUES($1, $2, $3) RETURNING id',
+      text: 'INSERT INTO playlistsongs (id, playlist_id, song_id) VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, songId],
     };
 
@@ -90,8 +90,8 @@ class PlaylistsService {
     const query = {
       text: `SELECT songs.id, songs.title, songs.performer
         FROM songs
-        LEFT JOIN playlist_songs ON songs.id = playlist_songs.song_id
-        WHERE playlist_songs.playlist_id = $1`,
+        LEFT JOIN playlistsongs ON songs.id = playlistsongs.song_id
+        WHERE playlistsongs.playlist_id = $1`,
       values: [playlistId],
     };
 
@@ -102,7 +102,7 @@ class PlaylistsService {
   // menghapus song dari playlist
   async deleteSongFromPlaylist(playlistId, songId) {
     const query = {
-      text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
+      text: 'DELETE FROM playlistsongs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
       values: [playlistId, songId],
     };
 

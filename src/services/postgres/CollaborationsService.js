@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
-const NotFoundError = require('../../exceptions/NotFoundError');
+// const NotFoundError = require('../../exceptions/NotFoundError');
 
 class CollaborationsService {
   constructor() {
@@ -48,18 +48,18 @@ class CollaborationsService {
   //   }
   // }
 
-  async verifyPlaylist(playlistsId) {
-    const query = {
-      text: 'SELECT * FROM playlists WHERE id = $1',
-      values: [playlistsId],
-    };
+  // async verifyPlaylist(playlistsId) {
+  //   const query = {
+  //     text: 'SELECT * FROM playlists WHERE id = $1',
+  //     values: [playlistsId],
+  //   };
 
-    const result = await this._pool.query(query);
+  //   const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
-      throw new NotFoundError('Playlist tidak ditemukan');
-    }
-  }
+  //   if (!result.rows.length) {
+  //     throw new NotFoundError('Playlist tidak ditemukan');
+  //   }
+  // }
 
   async verifyCollaborator(playlistId, userId) {
     const query = {

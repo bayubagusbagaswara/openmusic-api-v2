@@ -1,7 +1,7 @@
 class PlaylistsHandler {
   constructor(playlistsService, songsService, usersService, validator) {
     this._playlistsService = playlistsService;
-    this._songService = songsService;
+    this._songsService = songsService;
     this._usersService = usersService;
 
     this._validator = validator;

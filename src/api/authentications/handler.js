@@ -59,7 +59,7 @@ class AuthenticationsHandler {
 
     return {
       status: 'success',
-      message: 'Refresh token berhasil dihapus',
+      message: 'Refresh token berhasil dihapus. Authentication berhasil diperbarui',
     };
   }
 }

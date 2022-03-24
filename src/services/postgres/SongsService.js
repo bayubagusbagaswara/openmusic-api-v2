@@ -32,7 +32,6 @@ class SongsService {
     if (title && performer) {
       query = {
         text: 'SELECT id, title, performer FROM songs WHERE LOWER (title) LIKE $1 AND LOWER (performer) LIKE $2',
-        // values: ['%{titl', `%${performer}%`],
         values: [`%${title}%`, `%${performer}%`],
       };
     } else if (title) {
@@ -101,13 +100,13 @@ class SongsService {
 
   async verifyExistingSongById(id) {
     const query = {
-      text: 'SELECT id FROM songs WHERE id = $1',
+      text: 'SELECT COUNT(1) FROM songs WHERE id = $1',
       values: [id],
     };
 
     const result = await this._pool.query(query);
 
-    if (!result.rowCount) {
+    if (!result) {
       throw new NotFoundError('Lagu tidak ditemukan');
     }
   }

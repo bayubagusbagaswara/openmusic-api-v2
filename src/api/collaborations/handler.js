@@ -16,12 +16,16 @@ class CollaborationsHandler {
     const { playlistId, userId } = request.payload;
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
-    await this._usersService.verifyExistingUserById(userId);
+
+    // kita verifikasi dulu user dan playlist nya
+    await this._collaborationsService.verifyUser(userId);
+    await this._collaborationsService.verifyPlaylist(playlistId);
 
     const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
 
     const response = h.response({
       status: 'success',
+      message: 'Kolaborasi berhasil ditambahkan',
       data: {
         collaborationId,
       },
@@ -37,6 +41,11 @@ class CollaborationsHandler {
     const { playlistId, userId } = request.payload;
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
+
+    // verifikasi data user dan playlist yang ada di database
+    await this._collaborationsService.verifyUser(userId);
+    await this._collaborationsService.verifyPlaylist(playlistId);
+
     await this._collaborationsService.deleteCollaboration(playlistId, userId);
 
     return {

@@ -1,7 +1,5 @@
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
-const AuthenticationError = require('../../exceptions/AuthenticationError');
 
 class AuthenticationsService {
   constructor() {
@@ -13,7 +11,6 @@ class AuthenticationsService {
       text: 'INSERT INTO authentications VALUES($1)',
       values: [token],
     };
-
     await this._pool.query(query);
   }
 
@@ -24,7 +21,6 @@ class AuthenticationsService {
     };
 
     const result = await this._pool.query(query);
-
     if (!result.rows.length) {
       throw new InvariantError('Refresh token tidak valid');
     }
@@ -37,28 +33,6 @@ class AuthenticationsService {
     };
 
     await this._pool.query(query);
-  }
-
-  async verifyUserCredential(username, password) {
-    const query = {
-      text: 'SELECT id, password FROM users WHERE username = $1',
-      values: [username],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new AuthenticationError('Kredensial yang Anda berikan salah');
-    }
-
-    const { id, password: hashedPassword } = result.rows[0];
-
-    const match = await bcrypt.compare(password, hashedPassword);
-
-    if (!match) {
-      throw new AuthenticationError('Kredensial yang Anda berikan salah');
-    }
-    return id;
   }
 }
 

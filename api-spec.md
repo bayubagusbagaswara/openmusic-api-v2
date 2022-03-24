@@ -10,10 +10,10 @@
 
 ## Ketentuan:
 
-- Username harus unik.
+- `Username` harus unik.
 - Authentication menggunakan JWT token.
 - JWT token harus mengandung payload berisi userId yang merupakan id dari user autentik.
-- Nilai secret key token JWT baik access token ataupun refresh token wajib menggunakan environment variable ACCESS_TOKEN_KEY dan REFRESH_TOKEN_KEY.
+- Nilai secret key token JWT baik access token ataupun refresh token wajib menggunakan environment variable `ACCESS_TOKEN_KEY` dan `REFRESH_TOKEN_KEY`.
 - Refresh token memiliki signature yang benar serta terdaftar di database.
 
 # Kriteria 2 : Pengelolaan Data Playlist 
@@ -22,9 +22,9 @@
 ## Ketentuan:
 
 - Playlist merupakan resource yang dibatasi (restrict). Untuk mengaksesnya membutuhkan access token.
-- Playlist yang muncul pada GET /playlists hanya yang ia miliki saja.
-- Hanya owner playlist (atau kolabolator) yang dapat menambahkan, melihat, dan menghapus lagu ke/dari playlist.
-- songId dimasukkan/dihapus ke/dari playlist wajib bernilai id lagu yang valid.
+- Playlist yang muncul pada `GET /playlists` hanya yang ia miliki saja.
+- Hanya `owner playlist (atau kolabolator)` yang dapat menambahkan, melihat, dan menghapus lagu ke atau dari playlist.
+- `songId` dimasukkan/dihapus ke/dari playlist wajib bernilai id lagu yang valid.
 
 - GET /playlist
 ```json
@@ -93,7 +93,7 @@
 # Kriteria 3 : Menerapkan Foreign Key
 
 ## Database wajib menerapkan Foreign Key. Contohnya relasi:
-
+Database wajib menerapkan Foreign Key. Contohnya relasi:
 - Tabel songs terhadap albums;
 - Tabel playlists terhadap users;
 - Dan relasi tabel lainnya.

@@ -9,22 +9,15 @@ exports.up = (pgm) => {
       primaryKey: true,
     },
     playlist_id: {
-      type: 'VARCHAR(50)',
-      references: 'playlists',
-      onDelete: 'cascade',
+      type: 'TEXT',
+      notNull: true,
     },
     song_id: {
-      type: 'VARCHAR(50)',
-      references: 'songs',
-      onDelete: 'cascade',
+      type: 'TEXT',
+      notNull: true,
     },
   });
 
-  pgm.addConstraint(
-    'playlistsongs',
-    'unique_playlist_id_and_song_id',
-    'UNIQUE(playlist_id, song_id)',
-  );
   pgm.addConstraint(
     'playlist_songs',
     'fk_playlist_songs.playlist_id_playlists.id',

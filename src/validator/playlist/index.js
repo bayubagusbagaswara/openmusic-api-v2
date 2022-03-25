@@ -1,19 +1,20 @@
 const InvariantError = require('../../exceptions/InvariantError');
-const { PostPlaylistSchema, PostSongToPlaylistSchema } = require('./schema');
+const { PlaylistPayloadSchema, PlaylistSongsPayloadSchema } = require('./schema');
 
 const PlaylistsValidator = {
   validatePlaylistPayload: (payload) => {
-    const validationResult = PostPlaylistSchema.validate(payload);
+    const validationResult = PlaylistPayloadSchema.validate(payload);
+
     if (validationResult.error) {
-      throw new InvariantError(validationResult.error.message);
+      throw new InvariantError(validationResult.error.message); // tampilkan pesan error dari validasi inputan
     }
   },
 
-  validatePostSongToPlaylistPayload: (payload) => {
-    const { error } = PostSongToPlaylistSchema.validate(payload);
+  validatePlaylistSongPayload: (payload) => {
+    const validationResult = PlaylistSongsPayloadSchema.validate(payload);
 
-    if (error) {
-      throw new InvariantError(error.message);
+    if (validationResult.error) {
+      throw new InvariantError(validationResult.error.message); // tampilkan pesan error dari validasi inputan
     }
   },
 };

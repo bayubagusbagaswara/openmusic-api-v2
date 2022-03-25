@@ -52,7 +52,7 @@ class PlaylistsService {
       values: [id],
     };
     const result = await this._pool.query(query);
-    if (!result.rowCount) {
+    if (!result.rows.length) {
       throw new NotFoundError('Playlist gagal dihapus. Playlist ID tidak ditemukan');
     }
   }

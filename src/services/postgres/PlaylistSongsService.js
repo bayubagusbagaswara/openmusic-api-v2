@@ -3,21 +3,12 @@ const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 
 class PlaylistSongsService {
-  constructor(playlistsService) {
+  constructor() {
     this._pool = new Pool();
-    this._playlistsService = playlistsService;
   }
 
-  async addSongToPlaylist(payload) {
-    const { playlistId, userId, songId } = payload;
+  async addSongToPlaylist(songId, playlistId) {
     const id = `playlist_songs-${nanoid(16)}`;
-
-    // verifikasi bahwa playlist ada atau tidak
-    await this._playlistsService.verifyPlaylistIsExist(playlistId);
-    // varifikasi bahwa playlist tersebut bisa diakses oleh user tertentu
-    await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
-
-    // setelah lolos verifikasi, maka kita tambahkan song kedalam playlist
 
     const query = {
       text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id',
@@ -28,8 +19,10 @@ class PlaylistSongsService {
     if (!result.rows.length) {
       throw new InvariantError('Lagu gagal ditambahkan ke playlist');
     }
+    return result.rows[0].id;
   }
 
+  // BAGAIMANA CARA MENGAMBIL LAGU DARI PLAYLIST?
   async getSongsFromPlaylistId(playlistId, userId) {
     await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
     const query = {
@@ -48,10 +41,7 @@ class PlaylistSongsService {
     return result.rows;
   }
 
-  async deleteSongFromPlaylist(playlistId, songId, userId) {
-    await this._playlistsService.verifyPlaylistIsExist(playlistId);
-    await this._playlistsService.verifyPlaylistAccess(playlistId, userId);
-
+  async deleteSongFromPlaylist(playlistId, songId) {
     const query = {
       text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
       values: [playlistId, songId],
@@ -59,7 +49,7 @@ class PlaylistSongsService {
 
     const result = await this._pool.query(query);
     if (!result.rows.length) {
-      throw new InvariantError('Lagu gagal dihapus dari playlist. Id tidak ditemukan');
+      throw new InvariantError('Lagu gagal dihapus dari playlist');
     }
   }
 }

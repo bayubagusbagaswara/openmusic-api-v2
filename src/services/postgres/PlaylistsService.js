@@ -26,10 +26,11 @@ class PlaylistsService {
 
   async getPlaylistsByUserId(owner) {
     const query = {
-      text: `SELECT playlists.id, playlist.name, users.username FROM playlists
-      INNER JOIN users ON playlists.owner = users.id
-      LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
-      WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
+      text: `SELECT playlists.*, users.username FROM playlists
+        LEFT JOIN collaborations ON collaborations.playlist_id = playlists.id
+        LEFT JOIN users ON playlists.owner = users.id
+        WHERE playlists.owner = $1 OR collaborations.user_id = $1
+        GROUP BY playlists.id, users.username`,
       values: [owner],
     };
 
@@ -39,9 +40,9 @@ class PlaylistsService {
 
   async getPlaylistById(id) {
     const query = {
-      text: `SELECT playlists.*, users.username FROM playlists 
-        LEFT JOIN users ON playlists.owner = users.id
-        LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id
+      text: `SELECT playlists.*, users.username 
+        FROM playlists 
+        LEFT JOIN users ON users.id = playlists.owner
         WHERE playlists.id = $1`,
       values: [id],
     };
@@ -60,6 +61,38 @@ class PlaylistsService {
     const result = await this._pool.query(query);
     if (!result.rowCount) {
       throw new NotFoundError('Playlist gagal dihapus. Id tidak ditemukan');
+    }
+  }
+
+  async verifyPlaylistOwner(playlistId, owner) {
+    const query = {
+      text: 'SELECT * FROM playlists WHERE id = $1',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist tidak ditemukan');
+    }
+
+    const playlist = result.rows[0];
+    if (playlist.owner !== owner) {
+      throw new AuthorizationError('Anda tidak berhak mengakses resource ini. Anda bukan pemilik playlist ini');
+    }
+  }
+
+  async verifyPlaylistAccess(playlistId, userId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, userId);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+      try {
+        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+      } catch {
+        throw error;
+      }
     }
   }
 
@@ -99,23 +132,6 @@ class PlaylistsService {
   //   return result.rows;
   // }
 
-  async verifyPlaylistOwnerAccess(playlistId, userId) {
-    const query = {
-      text: 'SELECT * FROM playlists WHERE id = $1',
-      values: [playlistId],
-    };
-
-    const result = await this._pool.query(query);
-    if (!result.rows.length) {
-      throw new NotFoundError('Playlist tidak ditemukan');
-    }
-
-    const playlist = result.rows[0];
-    if (playlist.owner !== userId) {
-      throw new AuthorizationError('Anda tidak berhak mengakses resource ini. Anda bukan pemilik playlist ini');
-    }
-  }
-
   // async verifyPostSongToPlaylist(songId) {
   //   const query = {
   //     text: 'SELECT * FROM songs WHERE id = $1',
@@ -128,34 +144,34 @@ class PlaylistsService {
   //   }
   // }
 
-  async verifyPlaylistAccess(playlistId, userId) {
-    const query = {
-      text: `SELECT playlist.id
-      FROM playlists
-      INNER JOIN users ON playlists.owner = users.id
-      LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
-      WHERE (playlist.owner = $1 OR collaborations.user_id = $1) AND playlists.id = $2`,
-      values: [userId, playlistId],
-    };
+  // async verifyPlaylistAccess(playlistId, userId) {
+  //   const query = {
+  //     text: `SELECT playlist.id
+  //     FROM playlists
+  //     INNER JOIN users ON playlists.owner = users.id
+  //     LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
+  //     WHERE (playlist.owner = $1 OR collaborations.user_id = $1) AND playlists.id = $2`,
+  //     values: [userId, playlistId],
+  //   };
 
-    const result = await this._pool.query(query);
-    if (!result.rows[0]) {
-      throw new AuthorizationError('Anda bukan collaborator playlist ini');
-    }
-  }
+  //   const result = await this._pool.query(query);
+  //   if (!result.rows[0]) {
+  //     throw new AuthorizationError('Anda bukan collaborator playlist ini');
+  //   }
+  // }
 
-  async verifyPlaylistIsExist(playlistId) {
-    const query = {
-      text: 'SELECT COUNT(1) FROM playlist WHERE id = $1',
-      values: [playlistId],
-    };
+  // async verifyPlaylistIsExist(playlistId) {
+  //   const query = {
+  //     text: 'SELECT COUNT(1) FROM playlist WHERE id = $1',
+  //     values: [playlistId],
+  //   };
 
-    const result = await this._pool.query(query);
+  //   const result = await this._pool.query(query);
 
-    if (!result) {
-      throw new NotFoundError('Playlist yang dicari tidak ditemukan');
-    }
-  }
+  //   if (!result) {
+  //     throw new NotFoundError('Playlist yang dicari tidak ditemukan');
+  //   }
+  // }
 }
 
 module.exports = PlaylistsService;

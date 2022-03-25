@@ -3,7 +3,6 @@ const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const { mapDBToModel } = require('../../utils');
 
 class PlaylistsService {
   constructor(collaborationsService, songsService) {
@@ -51,7 +50,7 @@ class PlaylistsService {
     if (!result.rows.length) {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
-    return result.rows.map(mapDBToModel)[0];
+    return result.rows;
   }
 
   async deletePlaylistById(id) {
@@ -81,7 +80,10 @@ class PlaylistsService {
 
   async getPlaylistDetails(playlistId) {
     const query = {
-      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN users ON playlists.owner = users.id WHERE playlists.id = $1',
+      text: `SELECT playlists.id, playlists.name, users.username 
+        FROM playlists 
+        LEFT JOIN users ON playlists.owner = users.id 
+        WHERE playlists.id = $1`,
       values: [playlistId],
     };
     const result = await this._pool.query(query);
@@ -93,7 +95,10 @@ class PlaylistsService {
 
   async getPlaylistSongs(playlistId) {
     const query = {
-      text: 'SELECT songs.id, songs.title, songs.performer FROM playlist_songs LEFT JOIN songs ON playlist_songs.songid = songs.id WHERE playlistid = $1',
+      text: `SELECT songs.id, songs.title, songs.performer 
+        FROM playlist_songs 
+        LEFT JOIN songs ON playlist_songs.song_id = songs.id 
+        WHERE playlist_id = $1`,
       values: [playlistId],
     };
     const result = await this._pool.query(query);
@@ -102,7 +107,7 @@ class PlaylistsService {
 
   async deleteSongFromPlaylist(playlistId, songId) {
     const query = {
-      text: 'DELETE FROM playlist_songs WHERE playlistid = $1 AND songid = $2',
+      text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2',
       values: [playlistId, songId],
     };
     const result = await this._pool.query(query);
@@ -145,11 +150,12 @@ class PlaylistsService {
 
   async getPlaylistActivities(playlistId) {
     const query = {
-      text: `SELECT u.username, s.title, psa.action, psa.time FROM playlist_song_activities psa
-      INNER JOIN users u ON psa.userid = u.id
-      INNER JOIN songs s ON psa.songid = s.id
-      WHERE playlistid = $1
-      ORDER BY psa.time ASC`,
+      text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time 
+      FROM playlist_song_activities
+      INNER JOIN users ON playlist_song_activities.user_id = u.id
+      INNER JOIN songs ON playlist_song_activities.song_id = s.id
+      WHERE playlist_id = $1
+      ORDER BY playlist_song_activities.time ASC`,
       values: [playlistId],
     };
     const result = await this._pool.query(query);
@@ -157,10 +163,10 @@ class PlaylistsService {
   }
 
   async addPlaylistActivities(playlistId, songId, userId, action) {
-    const id = `p-s-a-${nanoid(16)}`;
+    const id = `playlist_song_activities${nanoid(16)}`;
     const time = new Date();
     const query = {
-      text: 'INSERT INTO playlist_song_activities (id, playlistid, songid, userid, action, time) VALUES ($1, $2, $3, $4, $5, $6)',
+      text: 'INSERT INTO playlist_song_activities (id, playlist_id, song_id, user_id, action, time) VALUES ($1, $2, $3, $4, $5, $6)',
       values: [id, playlistId, songId, userId, action, time],
     };
     await this._pool.query(query);

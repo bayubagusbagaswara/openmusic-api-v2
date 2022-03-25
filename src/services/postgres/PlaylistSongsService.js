@@ -2,7 +2,7 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 
-class PlaylistSongsService {
+class PlaylistsongsService {
   constructor() {
     this._pool = new Pool();
   }
@@ -54,4 +54,4 @@ class PlaylistSongsService {
   }
 }
 
-module.exports = PlaylistSongsService;
+module.exports = PlaylistsongsService;

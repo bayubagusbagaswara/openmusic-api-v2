@@ -37,6 +37,9 @@ const collaborations = require('./api/collaborations');
 const CollaborationsService = require('./services/postgres/CollaborationsService');
 const CollaborationsValidator = require('./validator/collaborations');
 
+// errors
+const errors = require('./api/errors');
+
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
@@ -81,6 +84,9 @@ const init = async () => {
 
   await server.register([
     {
+      plugin: errors,
+    },
+    {
       plugin: users,
       options: {
         service: usersService,
@@ -113,8 +119,7 @@ const init = async () => {
     {
       plugin: playlists,
       options: {
-        service: playlistsService,
-        collaborationsService,
+        playlistsService,
         songsService,
         validator: PlaylistsValidator,
       },
@@ -124,7 +129,6 @@ const init = async () => {
       options: {
         collaborationsService,
         playlistsService,
-        usersService,
         validator: CollaborationsValidator,
       },
     }]);

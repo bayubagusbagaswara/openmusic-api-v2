@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
+const { mapDBToModel } = require('../../utils');
 
 class PlaylistsService {
   constructor(collaborationsService) {
@@ -35,7 +36,7 @@ class PlaylistsService {
     };
 
     const result = await this._pool.query(query);
-    return result.rows;
+    return result.rows.map(mapDBToModel);
   }
 
   async getPlaylistById(id) {
@@ -50,7 +51,7 @@ class PlaylistsService {
     if (!result.rows.length) {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
-    return result.rows[0];
+    return result.rows.map(mapDBToModel)[0];
   }
 
   async deletePlaylistById(id) {

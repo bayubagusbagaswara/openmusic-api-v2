@@ -45,6 +45,28 @@ const mapPlaylistSongsDBToModel = ({ id, playlist_id, song_id }) => ({
   songId: song_id,
 });
 
+const mapDBToModel = ({
+  id,
+  title,
+  year,
+  performer,
+  genre,
+  duration,
+  album_id,
+  inserted_at,
+  updated_at,
+}) => ({
+  id,
+  title,
+  year,
+  performer,
+  genre,
+  duration,
+  albumId: album_id,
+  insertedAt: inserted_at,
+  updatedAt: updated_at,
+});
+
 const mapCollaborationsDBToModel = ({ id, playlist_id, user_id }) => ({
   id,
   playlistId: playlist_id,
@@ -63,5 +85,5 @@ const mapPlaylistSongActivitiesDBToModel = ({
 });
 
 module.exports = {
-  mapAlbumDBToModel, mapSongDBToModel, mapPlaylistDBToModel, mapUserDBToModel, mapPlaylistSongsDBToModel, mapCollaborationsDBToModel, mapPlaylistSongActivitiesDBToModel,
+  mapAlbumDBToModel, mapSongDBToModel, mapPlaylistDBToModel, mapUserDBToModel, mapPlaylistSongsDBToModel, mapCollaborationsDBToModel, mapPlaylistSongActivitiesDBToModel, mapDBToModel,
 };

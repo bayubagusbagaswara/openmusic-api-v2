@@ -40,4 +40,4 @@
 
 - kita belum memproteksi routes.js
 
-truncate albums, songs, users, authentications, playlists, playlistsongs, playlist_song_activities, collaborations;
+truncate albums, songs, users, authentications, playlists, playlist_songs, playlist_song_activities, collaborations;

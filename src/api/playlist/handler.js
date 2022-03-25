@@ -8,9 +8,9 @@ class PlaylistsHandler {
     this.getPlaylistsHandler = this.getPlaylistsHandler.bind(this);
     this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
 
-    this.postSongToplaylistHandler = this.postSongToPlaylistHandler.bind(this);
-    this.getSongsWithPlaylistHandler = this.getSongsFromPlaylistHandler.bind(this);
-    this.deleteSongByFromPlaylistHandler = this.deleteSongFromPlaylistHandler.bind(this);
+    // this.postSongToplaylistHandler = this.postSongToPlaylistHandler.bind(this);
+    // this.getSongsWithPlaylistHandler = this.getSongsFromPlaylistHandler.bind(this);
+    // this.deleteSongByFromPlaylistHandler = this.deleteSongFromPlaylistHandler.bind(this);
 
     // this.getActivitiesHandler = this.getPlaylistSongActivitiesHandler.bind(this);
   }
@@ -37,14 +37,15 @@ class PlaylistsHandler {
     const { id: credentialId } = request.auth.credentials;
     const playlists = await this._playlistsService.getPlaylistsByUserId(credentialId);
 
+    const playlistsProps = playlists.map((playlist) => ({
+      id: playlist.id,
+      name: playlist.name,
+      username: playlist.username,
+    }));
     return {
       status: 'success',
       data: {
-        playlists: playlists.map((playlist) => ({
-          id: playlist.id,
-          name: playlist.name,
-          username: playlist.username,
-        })),
+        playlists: playlistsProps,
       },
     };
   }

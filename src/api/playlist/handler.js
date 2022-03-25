@@ -10,8 +10,6 @@ class PlaylistsHandler {
     // this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
 
     this.postPlaylistHandler = this.postPlaylistHandler.bind(this);
-    this.getPlaylistHandler = this.getPlaylistHandler.bind(this);
-    this.deletePlaylistHandler = this.deletePlaylistHandler.bind(this);
     this.postPlaylistSongHandler = this.postPlaylistSongHandler.bind(this);
     this.getPlaylistSongHandler = this.getPlaylistSongHandler.bind(this);
     this.deletePlaylistSongHandler = this.deletePlaylistSongHandler.bind(this);

@@ -10,15 +10,18 @@ exports.up = (pgm) => {
     },
     playlist_id: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      references: 'playlists',
+      onDelete: 'cascade',
     },
     song_id: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      references: 'songs',
+      onDelete: 'cascade',
     },
     user_id: {
       type: 'VARCHAR(50)',
-      notNull: true,
+      references: 'users',
+      onDelete: 'cascade',
     },
     action: {
       type: 'TEXT',
@@ -31,11 +34,11 @@ exports.up = (pgm) => {
     },
   });
 
-  pgm.addConstraint(
-    'playlist_song_activities',
-    'fk_playlist_song_activities.playlist_id_playlists.id',
-    'FOREIGN KEY(playlist_id) REFERENCES playlists(id) ON DELETE CASCADE',
-  );
+  // pgm.addConstraint(
+  //   'playlist_song_activities',
+  //   'fk_playlist_song_activities.playlist_id_playlists.id',
+  //   'FOREIGN KEY(playlist_id) REFERENCES playlists(id) ON DELETE CASCADE',
+  // );
 };
 
 exports.down = (pgm) => {

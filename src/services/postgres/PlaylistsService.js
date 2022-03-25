@@ -11,6 +11,7 @@ class PlaylistsService {
   }
 
   async addPlaylist(name, owner) {
+    // membuat playlist kita butuh data name dan owner
     const id = `playlist-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
@@ -25,15 +26,22 @@ class PlaylistsService {
   }
 
   async getPlaylists(owner) {
+    // getPlaylist by owner artinya hanya owner ini yang bisa mengambil data playlist
+    // data owner (table Playlist) == userId (table Users)
+    // data id (Table Playlist) == playlist_id (table Collaborations)
+    // pada saat getPlaylist ini kita hanya mengambil data playlist_id, playlist_name, dan username (diambil dari table Users)
+    // jadi kita join table playlist, table collaborations, dan table users
+    // yang bisa akses getPlaylist ini adalah users.id atau collaborations.user_id
     const query = {
       text: `SELECT playlists.id, playlist.name, users.username 
-      FROM playlists
-        LEFT JOIN collaborations ON collaborations.playlist_id = playlist_id
+        FROM playlists
+        LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
         LEFT JOIN users ON users.id = playlists.owner
         WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
       values: [owner],
     };
 
+    // hasil query disini adalah data playlist_id, playlist_name, username
     const result = await this._pool.query(query);
     return result.rows;
   }

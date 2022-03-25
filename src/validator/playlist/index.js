@@ -6,7 +6,7 @@ const PlaylistsValidator = {
     const validationResult = PlaylistPayloadSchema.validate(payload);
 
     if (validationResult.error) {
-      throw new InvariantError(validationResult.error.message); // tampilkan pesan error dari validasi inputan
+      throw new InvariantError(validationResult.error.message);
     }
   },
 
@@ -14,7 +14,7 @@ const PlaylistsValidator = {
     const validationResult = PlaylistSongsPayloadSchema.validate(payload);
 
     if (validationResult.error) {
-      throw new InvariantError(validationResult.error.message); // tampilkan pesan error dari validasi inputan
+      throw new InvariantError(validationResult.error.message);
     }
   },
 };

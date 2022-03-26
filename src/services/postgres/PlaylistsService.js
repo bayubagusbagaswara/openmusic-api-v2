@@ -6,14 +6,13 @@ const AuthorizationError = require('../../exceptions/AuthorizationError');
 const ClientError = require('../../exceptions/ClientError');
 
 class PlaylistsService {
-  constructor(collaborationsService, activitiesService) {
+  constructor(collaborationsService) {
     this._pool = new Pool();
     this._collaborationsService = collaborationsService;
-    this._activitiesService = activitiesService;
   }
 
+  // ADD PLAYLIST
   async addPlaylist(name, owner) {
-    // membuat playlist kita butuh data name dan owner
     const id = `playlist-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
@@ -27,6 +26,7 @@ class PlaylistsService {
     return result.rows[0].id;
   }
 
+  // GET ALL PLAYLISTS
   async getPlaylists(owner) {
     // getPlaylist by owner artinya hanya owner ini yang bisa mengambil data playlist
     // data owner (table Playlist) == userId (table Users)
@@ -48,6 +48,9 @@ class PlaylistsService {
     return result.rows;
   }
 
+  // GET PLAYLIST BY ID
+
+  // DELETE PLAYLIST BY ID
   async deletePlaylistById(id) {
     const query = {
       text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
@@ -59,6 +62,9 @@ class PlaylistsService {
     }
   }
 
+  /** SERVICE PLAYLIST SONGS */
+
+  // ADD LAGU KE PLAYLIST
   async addSongToPlaylist({ playlistId, songId, credentialId }) {
     // menambahkan lagu ke playlist hanya bisa dilakukan oleh owner playlist atau collaborator
     const id = `playlist_song-${nanoid(16)}`;
@@ -81,9 +87,8 @@ class PlaylistsService {
     return result.rows[0].id;
   }
 
+  // AMBIL SEMUA LAGU YANG ADA DI PLAYLIST
   async getSongsFromPlaylist(playlistId, owner) {
-    // ambil data lagu dari playlist
-
     const query1 = {
       text: `SELECT playlists.id, playlists.name, users.username 
         FROM playlists
@@ -118,7 +123,8 @@ class PlaylistsService {
     return combine;
   }
 
-  async deleteSongFromPlaylistById(playlistId, songId, credentialId) {
+  // DELETE SONG FROM PLAYLIST
+  async deleteSongFromPlaylist(playlistId, songId, credentialId) {
     const query = {
       text: 'DELETE FROM playlist_songs WHERE song_id = $1 AND playlist_id = $2 RETURNING id',
       values: [songId, playlistId],
@@ -135,6 +141,8 @@ class PlaylistsService {
     await this._activitiesService.addActivity(playlistId, songId, userId, action);
   }
 
+  /** VERIFIKASI */
+  // VERIFIKASI PEMILIK PLAYLIST
   async verifyPlaylistOwner(playlistId, owner) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1',
@@ -153,7 +161,8 @@ class PlaylistsService {
     }
   }
 
-  async verifySongId(id) {
+  // VERIFIKASI SONG, BAHWA EMANG ADA LAGU DI TABLE SONGS
+  async verifySong(id) {
     const query = {
       text: 'SELECT * FROM songs WHERE id = $1',
       values: [id],
@@ -165,6 +174,7 @@ class PlaylistsService {
     }
   }
 
+  // VERIFIKASI SIAPA SAJA YANG BISA AKSES PLAYLIST
   async verifyPlaylistAccess(playlistId, userId) {
     try {
       await this.verifyPlaylistOwner(playlistId, userId);

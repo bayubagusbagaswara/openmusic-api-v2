@@ -16,6 +16,10 @@ class CollaborationsHandler {
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
+    /* Verifikasi data user dan Playlist ada di database */
+    // await this._collaborationsService.verifyUser(userId);
+    // await this._collaborationsService.verifyPlaylist(playlistId);
+
     const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
 
     const response = h.response({
@@ -35,7 +39,7 @@ class CollaborationsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    await this._playlistsService.verifyPlaylistOwnerAccess(playlistId, credentialId);
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
     await this._collaborationsService.deleteCollaboration(playlistId, userId);
 
     return {

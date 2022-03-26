@@ -29,17 +29,11 @@ class PlaylistsService {
 
   // GET ALL PLAYLISTS
   async getPlaylists(owner) {
-    // getPlaylist by owner artinya hanya owner ini yang bisa mengambil data playlist
-    // data owner (table Playlist) == userId (table Users)
-    // data id (Table Playlist) == playlist_id (table Collaborations)
-    // pada saat getPlaylist ini kita hanya mengambil data playlist_id, playlist_name, dan username (diambil dari table Users)
-    // jadi kita join table playlist, table collaborations, dan table users
-    // yang bisa akses getPlaylist ini adalah users.id atau collaborations.user_id
     const query = {
       text: `SELECT playlists.*, users.username 
         FROM playlists
         LEFT JOIN users ON playlists.owner = users.id
-        LEFT JOIN collaborations ON playlist.id = collaborations.playlist_id
+        LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id
         WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
       values: [owner],
     };

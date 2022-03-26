@@ -14,7 +14,7 @@ const SongsService = require('./services/postgres/SongsService');
 const SongsValidator = require('./validator/songs');
 
 // error
-const ClientError = require('./exceptions/ClientError');
+// const ClientError = require('./exceptions/ClientError');
 
 // users
 const users = require('./api/users');
@@ -28,7 +28,7 @@ const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
 
 // playlists
-const playlists = require('./api/playlist');
+const playlists = require('./api/playlists');
 const PlaylistsService = require('./services/postgres/PlaylistsService');
 const PlaylistsValidator = require('./validator/playlist');
 
@@ -126,20 +126,20 @@ const init = async () => {
       },
     }]);
 
-  server.ext('onPreResponse', (request, h) => {
-    const { response } = request;
+  // server.ext('onPreResponse', (request, h) => {
+  //   const { response } = request;
 
-    if (response instanceof ClientError) {
-      const newResponse = h.response({
-        status: 'fail',
-        message: response.message,
+  //   if (response instanceof ClientError) {
+  //     const newResponse = h.response({
+  //       status: 'fail',
+  //       message: response.message,
 
-      });
-      newResponse.code(response.statusCode);
-      return newResponse;
-    }
-    return response.continue || response;
-  });
+  //     });
+  //     newResponse.code(response.statusCode);
+  //     return newResponse;
+  //   }
+  //   return response.continue || response;
+  // });
 
   await server.start();
   console.log(`Server berjalan pada ${server.info.uri}`);

@@ -8,7 +8,7 @@ class PlaylistsHandler {
     this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
 
     this.postSongToPlaylistHandler = this.postSongToPlaylistHandler.bind(this);
-    this.getPlaylistSongsHandler = this.getPlaylistSongsHandler.bind(this);
+    this.getPlaylistSongsHandler = this.getSongsFromPlaylistHandler.bind(this);
     this.deletePlaylistSongsHandler = this.deleteSongFromPlaylistHandler.bind(this);
 
     // this.getPlaylistActivitiesHandler = this.getPlaylistActivitiesHandler.bind(this);
@@ -79,7 +79,7 @@ class PlaylistsHandler {
   }
 
   // Get songs in playlist
-  async getPlaylistSongsHandler(request) {
+  async getSongsFromPlaylistHandler(request) {
     const { id: playlistId } = request.params;
     const { id: credentialId } = request.auth.credentials;
     const playlist = await this._service.verifyPlaylistsAccess(playlistId, credentialId);

@@ -120,7 +120,7 @@ class PlaylistsService {
   }
 
   // DELETE SONG FROM PLAYLIST
-  async deleteSongFromPlaylist(playlistId, songId, credentialId) {
+  async deleteSongFromPlaylist(playlistId, songId) {
     const query = {
       text: 'DELETE FROM playlist_songs WHERE song_id = $1 AND playlist_id = $2 RETURNING id',
       values: [songId, playlistId],
@@ -130,11 +130,6 @@ class PlaylistsService {
     if (!result.rows.length) {
       throw new ClientError('Lagu gagal dihapus dari playlist');
     }
-
-    const action = 'delete';
-    const userId = credentialId;
-
-    await this._activitiesService.addActivity(playlistId, songId, userId, action);
   }
 
   /** VERIFIKASI */

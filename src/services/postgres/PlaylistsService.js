@@ -6,9 +6,9 @@ const AuthorizationError = require('../../exceptions/AuthorizationError');
 const ClientError = require('../../exceptions/ClientError');
 
 class PlaylistsService {
-  constructor(collaborationsService) {
+  constructor(collaborationService) {
     this._pool = new Pool();
-    this._collaborationsService = collaborationsService;
+    this._collaborationService = collaborationService;
   }
 
   // ADD PLAYLIST
@@ -100,8 +100,8 @@ class PlaylistsService {
   async getSongsFromPlaylist(playlistId) {
     // yang bisa mengambil hanya yang membuat playlist
     const query = {
-      text: `
-      SELECT songs.id, songs.title, songs.performer FROM songs
+      text: `SELECT songs.id, songs.title, songs.performer 
+      FROM songs
       JOIN playlist_songs ON songs.id = playlist_songs.song_id 
       WHERE playlist_songs.playlist_id = $1`,
       values: [playlistId],
@@ -166,7 +166,7 @@ class PlaylistsService {
         throw error;
       }
       try {
-        await this._collaborationsService.verifyCollaborator(playlistId, userId);
+        await this._collaborationService.verifyCollaborator(playlistId, userId);
       } catch {
         throw error;
       }

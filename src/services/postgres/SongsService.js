@@ -73,11 +73,11 @@ class SongsService {
   }
 
   async editSongById(id, {
-    title, year, performer, genre, duration,
+    title, year, performer, genre, duration, albumId,
   }) {
     const query = {
-      text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5 WHERE id = $6 RETURNING id',
-      values: [title, year, performer, genre, duration, id],
+      text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, "albumId" = $6 WHERE id = $7 RETURNING id',
+      values: [title, year, performer, genre, duration, albumId, id],
     };
     const result = await this._pool.query(query);
 
@@ -95,19 +95,6 @@ class SongsService {
     const result = await this._pool.query(query);
     if (!result.rows.length) {
       throw new NotFoundError('Lagu gagal dihapus. Id tidak ditemukan');
-    }
-  }
-
-  async verifyExistingSongById(id) {
-    const query = {
-      text: 'SELECT COUNT(1) FROM songs WHERE id = $1',
-      values: [id],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result) {
-      throw new NotFoundError('Lagu tidak ditemukan');
     }
   }
 }

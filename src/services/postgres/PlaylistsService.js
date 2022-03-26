@@ -30,8 +30,8 @@ class PlaylistsService {
   // GET ALL PLAYLISTS
   async getPlaylists(owner) {
     const query = {
-      text: `SELECT playlists.*, users.username 
-        FROM playlists
+      text: `
+        SELECT playlists.*, users.username FROM playlists
         LEFT JOIN users ON playlists.owner = users.id
         LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id
         WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
@@ -145,10 +145,10 @@ class PlaylistsService {
   }
 
   // VERIFIKASI SONG, BAHWA EMANG ADA LAGU DI TABLE SONGS
-  async verifySong(id) {
+  async verifySong(songId) {
     const query = {
       text: 'SELECT * FROM songs WHERE id = $1',
-      values: [id],
+      values: [songId],
     };
 
     const result = await this._pool.query(query);

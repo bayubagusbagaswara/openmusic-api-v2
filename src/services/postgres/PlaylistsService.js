@@ -36,10 +36,10 @@ class PlaylistsService {
     // jadi kita join table playlist, table collaborations, dan table users
     // yang bisa akses getPlaylist ini adalah users.id atau collaborations.user_id
     const query = {
-      text: `SELECT playlists.id, playlist.name, users.username 
+      text: `SELECT playlists.*, users.username 
         FROM playlists
-        LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
-        LEFT JOIN users ON users.id = playlists.owner
+        LEFT JOIN users ON playlists.owner = users.id
+        LEFT JOIN collaborations ON playlist.id = collaborations.playlist_id
         WHERE playlists.owner = $1 OR collaborations.user_id = $1`,
       values: [owner],
     };

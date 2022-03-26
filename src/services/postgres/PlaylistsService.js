@@ -83,7 +83,11 @@ class PlaylistsService {
   /** SERVICE PLAYLIST SONGS */
 
   // ADD LAGU KE PLAYLIST
-  async addSongToPlaylist({ playlistId, songId, credentialId }) {
+  async addSongToPlaylist(playlistId, songId) {
+    // kita lakukan dulu verifikasi terhadap lagu, apakah lagunya benar ada di table songs atau tidak, jika ada maka kita bisa tambahkan lagunya kedalam playlist
+    await this.verifySong(songId);
+
+    // lalu kita masukkan lagu ke playlist
     // menambahkan lagu ke playlist hanya bisa dilakukan oleh owner playlist atau collaborator
     const id = `playlist_song-${nanoid(16)}`;
     const query = {
@@ -96,11 +100,6 @@ class PlaylistsService {
     if (!result.rows[0].id) {
       throw new InvariantError('Lagu gagal ditambah di playlist');
     }
-
-    const action = 'add';
-    const userId = credentialId;
-
-    await this._activitiesService.addActivity(playlistId, songId, userId, action);
 
     return result.rows[0].id;
   }

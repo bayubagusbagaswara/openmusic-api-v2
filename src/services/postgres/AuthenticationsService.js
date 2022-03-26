@@ -11,6 +11,7 @@ class AuthenticationsService {
       text: 'INSERT INTO authentications VALUES($1)',
       values: [token],
     };
+
     await this._pool.query(query);
   }
 
@@ -21,6 +22,7 @@ class AuthenticationsService {
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rows.length) {
       throw new InvariantError('Refresh token tidak valid');
     }

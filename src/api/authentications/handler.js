@@ -14,7 +14,10 @@ class AuthenticationsHandler {
     this._validator.validatePostAuthenticationPayload(request.payload);
 
     const { username, password } = request.payload;
-    const id = await this._usersService.verifyUserCredential(username, password);
+    const id = await this._usersService.verifyUserCredential(
+      username,
+      password,
+    );
 
     const accessToken = this._tokenManager.generateAccessToken({ id });
     const refreshToken = this._tokenManager.generateRefreshToken({ id });
@@ -52,15 +55,15 @@ class AuthenticationsHandler {
 
   async deleteAuthenticationHandler(request) {
     this._validator.validateDeleteAuthenticationPayload(request.payload);
-
     const { refreshToken } = request.payload;
     await this._authenticationsService.verifyRefreshToken(refreshToken);
     await this._authenticationsService.deleteRefreshToken(refreshToken);
 
     return {
       status: 'success',
-      message: 'Refresh token berhasil dihapus. Authentication berhasil diperbarui',
+      message: 'Refresh token berhasil dihapus',
     };
   }
 }
+
 module.exports = AuthenticationsHandler;

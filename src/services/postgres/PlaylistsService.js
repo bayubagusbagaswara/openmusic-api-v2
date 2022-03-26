@@ -105,39 +105,18 @@ class PlaylistsService {
   }
 
   // AMBIL SEMUA LAGU YANG ADA DI PLAYLIST
-  async getSongsFromPlaylist(playlistId, owner) {
-    const query1 = {
-      text: `SELECT playlists.id, playlists.name, users.username 
-        FROM playlists
-        INNER JOIN users ON users.id = playlists.owner 
-        WHERE playlists.id = $2 
-        OR owner = $1 and playlists.id = $2`,
-      values: [owner, playlistId],
-    };
-
-    const query2 = {
-      text: `SELECT songs.id, songs.title, songs.performer 
-        FROM songs
-        LEFT JOIN playlist_songs ON playlist_songs.song_id = songs.id
-        WHERE palylist_songs.playlist_id = $1 
-        OR playlist_songs.playlist_id = $1`,
+  async getSongsFromPlaylist(playlistId) {
+    // yang bisa mengambil hanya yang membuat playlist
+    const query = {
+      text: `
+      SELECT songs.id, songs.title, songs.performer FROM songs
+      JOIN playlist_songs ON songs.id = playlist_songs.song_id 
+      WHERE playlist_songs.playlist_id = $1`,
       values: [playlistId],
     };
 
-    const result = await this._pool.query(query1);
-    const songs = await this._pool.query(query2);
-
-    const combine = {
-      ...result.rows[0],
-      songs: [
-        ...songs.rows],
-    };
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Playlist not found');
-    }
-
-    return combine;
+    const result = await this._pool.query(query);
+    return result.rows;
   }
 
   // DELETE SONG FROM PLAYLIST

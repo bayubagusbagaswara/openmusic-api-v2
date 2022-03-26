@@ -1,10 +1,11 @@
 const routes = (handler) => [
+  /* Playlist route */
   {
     method: 'POST',
     path: '/playlists',
     handler: handler.postPlaylistHandler,
     options: {
-      auth: 'openmusicapp_jwt',
+      auth: 'musicapp_jwt',
     },
   },
   {
@@ -12,7 +13,7 @@ const routes = (handler) => [
     path: '/playlists',
     handler: handler.getPlaylistsHandler,
     options: {
-      auth: 'openmusicapp_jwt',
+      auth: 'musicapp_jwt',
     },
   },
   {
@@ -20,45 +21,43 @@ const routes = (handler) => [
     path: '/playlists/{id}',
     handler: handler.deletePlaylistByIdHandler,
     options: {
-      auth: 'openmusicapp_jwt',
+      auth: 'musicapp_jwt',
     },
   },
-
-  /** ROUTE UNTUK PLAYLIST_SONGS */
+  /* Playlist with song route */
   {
     method: 'POST',
-    path: '/playlists/{id}/songs',
-    handler: handler.postSongToPlaylistHandler,
+    path: '/playlists/{playlistId}/songs',
+    handler: handler.postSongToplaylistHandler,
     options: {
-      auth: 'openmusicapp_jwt',
+      auth: 'musicapp_jwt',
     },
   },
   {
     method: 'GET',
-    path: '/playlists/{id}/songs',
-    handler: handler.getSongsFromPlaylistHandler,
+    path: '/playlists/{playlistId}/songs',
+    handler: handler.getSongsWithPlaylistHandler,
     options: {
-      auth: 'openmusicapp_jwt',
+      auth: 'musicapp_jwt',
     },
   },
   {
     method: 'DELETE',
-    path: '/playlists/{id}/songs',
-    handler: handler.deleteSongFromPlaylistHandler,
+    path: '/playlists/{playlistId}/songs',
+    handler: handler.deleteSongByFromPlaylistHandler,
     options: {
-      auth: 'openmusicapp_jwt',
+      auth: 'musicapp_jwt',
     },
   },
-
-  /** ROUTES UNTUK PLAYLIST_SONG_ACTIVITIES */
-  // {
-  //   method: 'GET',
-  //   path: '/playlists/{id}/activities',
-  //   handler: handler.getPlaylistActivitiesHandler,
-  //   options: {
-  //     auth: 'openmusicapp_jwt',
-  //   },
-  // },
+  /* Activities */
+  {
+    method: 'GET',
+    path: '/playlists/{playlistId}/activities',
+    handler: handler.getActivitiesHandler,
+    options: {
+      auth: 'musicapp_jwt',
+    },
+  },
 ];
 
 module.exports = routes;

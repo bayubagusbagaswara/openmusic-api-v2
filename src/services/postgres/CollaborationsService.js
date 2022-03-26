@@ -1,9 +1,7 @@
-const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
+const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-
-// const NotFoundError = require('../../exceptions/NotFoundError');
 
 class CollaborationsService {
   constructor() {
@@ -11,18 +9,16 @@ class CollaborationsService {
   }
 
   async addCollaboration(playlistId, userId) {
-    const id = `collab-${nanoid(16)}`;
-
     const query = {
       text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
-      values: [id, playlistId, userId],
+      values: [nanoid(16), playlistId, userId],
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rows.length) {
       throw new InvariantError('Kolaborasi gagal ditambahkan');
     }
-
     return result.rows[0].id;
   }
 
@@ -33,6 +29,7 @@ class CollaborationsService {
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rows.length) {
       throw new InvariantError('Kolaborasi gagal dihapus');
     }
@@ -70,6 +67,7 @@ class CollaborationsService {
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rows.length) {
       throw new InvariantError('Kolaborasi gagal diverifikasi');
     }

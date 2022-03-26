@@ -21,7 +21,7 @@ class PlaylistsService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows[0].id) {
+    if (!result.rows.length) {
       throw new InvariantError('Playlist gagal ditambahkan');
     }
     return result.rows[0].id;
@@ -85,7 +85,7 @@ class PlaylistsService {
     // menambahkan lagu ke playlist hanya bisa dilakukan oleh owner playlist atau collaborator
     const id = `playlist_song-${nanoid(16)}`;
     const query = {
-      text: 'INSERT INTO playlist_songs VALUES ($1, $2, $3) RETURNING id',
+      text: 'INSERT INTO playlist_songs (id, playlist_id, song_id) VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, songId],
     };
 
@@ -94,8 +94,6 @@ class PlaylistsService {
     if (!result.rows[0].id) {
       throw new InvariantError('Lagu gagal ditambah di playlist');
     }
-
-    return result.rows[0].id;
   }
 
   // AMBIL SEMUA LAGU YANG ADA DI PLAYLIST

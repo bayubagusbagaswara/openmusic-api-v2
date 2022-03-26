@@ -20,24 +20,10 @@ class UsersService {
     };
 
     const result = await this._pool.query(query);
-    if (!result.rowCount) {
+    if (!result.rows.length) {
       throw new InvariantError('User gagal ditambahkan');
     }
     return result.rows[0].id;
-  }
-
-  async getUserById(userId) {
-    const query = {
-      text: 'SELECT id, username, fullname FROM users WHERE id = $1',
-      values: [userId],
-    };
-
-    const result = await this._pool.query(query);
-    if (!result.rowCount) {
-      throw new NotFoundError('User tidak ditemukan');
-    }
-
-    return result.rows[0];
   }
 
   async verifyNewUsername(username) {
@@ -48,9 +34,23 @@ class UsersService {
 
     const result = await this._pool.query(query);
 
-    if (result.rowCount > 0) {
+    if (result.rows.length > 0) {
       throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
     }
+  }
+
+  async getUserById(userId) {
+    const query = {
+      text: 'SELECT id, username, fullname FROM users WHERE id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('User tidak ditemukan');
+    }
+
+    return result.rows[0];
   }
 
   async verifyUserCredential(username, password) {
@@ -60,7 +60,7 @@ class UsersService {
     };
 
     const result = await this._pool.query(query);
-    if (!result.rowCount) {
+    if (!result.rows.length) {
       throw new AuthenticationError('Kredensial yang Anda berikan salah');
     }
 
@@ -72,17 +72,6 @@ class UsersService {
     }
     return id;
   }
-
-  // async verifyExistingUserById(id) {
-  //   const query = {
-  //     text: 'SELECT id FROM users WHERE id = $1',
-  //     values: [id],
-  //   };
-  //   const result = await this._pool.query(query);
-  //   if (!result.rowCount) {
-  //     throw new NotFoundError('User tidak ditemukan');
-  //   }
-  // }
 }
 
 module.exports = UsersService;

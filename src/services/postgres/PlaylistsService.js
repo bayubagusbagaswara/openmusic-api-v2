@@ -3,7 +3,6 @@ const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const ClientError = require('../../exceptions/ClientError');
 
 class PlaylistsService {
   constructor(collaborationService) {
@@ -100,8 +99,7 @@ class PlaylistsService {
   async getSongsFromPlaylist(playlistId) {
     // yang bisa mengambil hanya yang membuat playlist
     const query = {
-      text: `SELECT songs.id, songs.title, songs.performer 
-      FROM songs
+      text: `SELECT songs.id, songs.title, songs.performer FROM songs
       JOIN playlist_songs ON songs.id = playlist_songs.song_id 
       WHERE playlist_songs.playlist_id = $1`,
       values: [playlistId],
@@ -114,13 +112,13 @@ class PlaylistsService {
   // DELETE SONG FROM PLAYLIST
   async deleteSongFromPlaylist(playlistId, songId) {
     const query = {
-      text: 'DELETE FROM playlist_songs WHERE song_id = $1 AND playlist_id = $2 RETURNING id',
-      values: [songId, playlistId],
+      text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
+      values: [playlistId, songId],
     };
 
     const result = await this._pool.query(query);
     if (!result.rows.length) {
-      throw new ClientError('Lagu gagal dihapus dari playlist');
+      throw new InvariantError('Lagu gagal dihapus dari playlist');
     }
   }
 

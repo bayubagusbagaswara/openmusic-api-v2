@@ -36,19 +36,20 @@ class CollaborationsService {
     }
   }
 
-  async verifyUser(userId) {
+  async verifyCollaborator(playlistId, userId) {
     const query = {
-      text: 'SELECT * FROM users WHERE id = $1',
-      values: [userId],
+      text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
+      values: [playlistId, userId],
     };
+
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('User tidak ditemukan');
+      throw new InvariantError('Kolaborasi gagal diverifikasi');
     }
   }
 
-  async verifyPlaylist(playlistsId) {
+  async verifyExistingPlaylist(playlistsId) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1',
       values: [playlistsId],
@@ -61,16 +62,15 @@ class CollaborationsService {
     }
   }
 
-  async verifyCollaborator(playlistId, userId) {
+  async verifyExistingUser(userId) {
     const query = {
-      text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
-      values: [playlistId, userId],
+      text: 'SELECT * FROM users WHERE id = $1',
+      values: [userId],
     };
-
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new InvariantError('Kolaborasi gagal diverifikasi');
+      throw new NotFoundError('User tidak ditemukan');
     }
   }
 }

@@ -13,11 +13,9 @@ class CollaborationsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    await this._playlistsService.verifyPlaylistOwner(
-      playlistId,
-      credentialId,
-    );
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
+    // verifikasi data user dan playlist dulu
     await this._collaborationsService.verifyUser(userId);
     await this._collaborationsService.verifyPlaylist(playlistId);
 
@@ -39,15 +37,7 @@ class CollaborationsHandler {
     const { id: credentialId } = request.auth.credentials;
     const { playlistId, userId } = request.payload;
 
-    await this._playlistsService.verifyPlaylistOwner(
-      playlistId,
-      credentialId,
-    );
-
-    /* Verifikasi data user dan Playlist ada di database */
-    await this._collaborationsService.verifyUser(userId);
-    await this._collaborationsService.verifyPlaylist(playlistId);
-
+    await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
     await this._collaborationsService.deleteCollaboration(playlistId, userId);
 
     return {

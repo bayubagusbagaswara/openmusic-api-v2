@@ -1,9 +1,10 @@
-const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
+const { mapUserDBToModel } = require('../../utils');
 
 class UsersService {
   constructor() {
@@ -50,7 +51,7 @@ class UsersService {
       throw new NotFoundError('User tidak ditemukan');
     }
 
-    return result.rows[0];
+    return result.rows.map(mapUserDBToModel)[0];
   }
 
   async verifyUserCredential(username, password) {

@@ -18,7 +18,6 @@ class CollaborationsHandler {
       credentialId,
     );
 
-    /* Verifikasi data user dan Playlist ada di database */
     await this._collaborationsService.verifyUser(userId);
     await this._collaborationsService.verifyPlaylist(playlistId);
 

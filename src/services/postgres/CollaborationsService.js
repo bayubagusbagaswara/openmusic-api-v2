@@ -9,9 +9,10 @@ class CollaborationsService {
   }
 
   async addCollaboration(playlistId, userId) {
+    const id = `collab-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
-      values: [nanoid(16), playlistId, userId],
+      values: [id, playlistId, userId],
     };
 
     const result = await this._pool.query(query);

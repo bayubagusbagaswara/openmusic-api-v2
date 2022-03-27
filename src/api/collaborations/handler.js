@@ -16,8 +16,8 @@ class CollaborationsHandler {
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
     // verifikasi data user dan playlist dulu
-    await this._collaborationsService.verifyUser(userId);
-    await this._collaborationsService.verifyPlaylist(playlistId);
+    await this._collaborationsService.verifyExistingUser(userId);
+    await this._collaborationsService.verifyExistingPlaylist(playlistId);
 
     const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
 
